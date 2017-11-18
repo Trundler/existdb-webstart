@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="webstart" default="all">
+
+    <property file="webstart.properties"/>
+
+    <property file="${exist.home}/build.properties"/>
+
+    <available file="${keystore.file}" property="keystore.present"/>
+
+    <target name="all" depends="clean-all,keygen,prepare,repack,sign,pack,clean-up" description="Generate signed JAR files"/>
+
+    <target name="sign" description="Sign JAR files">
+        <echo message="Signing libs in '${work.dir}'"/>
+        <signjar alias="${keystore.alias}" keystore="${keystore.file}" storepass="${keystore.password}" lazy="true">
+            <path>
+                <fileset dir="${work.dir}" includes="*.jar"/>
+            </path>
+        </signjar>
+    </target>
+
+    <target name="repack" description="Repack JAR files">
+        <echo message="Repacking libs in '${work.dir}'"/>
+        <apply executable="pack200" parallel="false">
+            <arg value="--repack"/>
+            <arg value="--segment-limit=-1"/>
+            <fileset dir="${work.dir}" includes="*.jar"/>
+        </apply>
+    </target>
+
+    <target name="keygen" description="Generate (dummy) keystore file" unless="keystore.present">
+        <echo message="Generating keystore file '${keystore.file}'"/>
+        <genkey alias="alias" storepass="secret" keystore="${keystore.file}" verbose="false" validity="10000">
+            <dname>
+                <param name="CN" value="eXist-db"/>
+                <param name="O" value="exist.org"/>
+            </dname>
+        </genkey>
+    </target>
+
+
+    <target name="pack" description="Pack JAR files">
+    <apply executable="pack200" parallel="false" dest="${work.dir}">
+        <arg value="--modification-time=latest"/>
+        <arg value="--deflate-hint=true"/>
+        <arg value="--segment-limit=-1"/>
+        <!--<arg value="&#45;&#45;strip-debug"/>-->
+        <arg value="--effort=9"/>
+        <targetfile/>
+        <srcfile/>
+        <fileset dir="${work.dir}" includes="**/*.jar" />
+        <mapper type="glob" from="*" to="*.pack.gz" />
+    </apply>
+    </target>
+
+    <target name="clean-all" description="Cleanup all files">
+        <delete dir="${work.dir}" failonerror="false"/>
+        <delete file="${keystore.file}" failonerror="false"/>
+    </target>
+
+    <target name="clean-up" description="Cleanup tmp jar files">
+        <delete failonerror="false">
+            <fileset dir="${work.dir}" includes="*.jar"/>
+        </delete>
+    </target>
+
+    <target name="prepare" description="Prepare">
+        <mkdir dir="${work.dir}"/>
+
+        <copy file="${exist.home}/exist.jar" tofile="${work.dir}/exist-${project.version}.jar"/>
+
+        <copy todir="${work.dir}">
+            <fileset dir="${exist.home}/lib/core">
+                <include name="commons-io-*.jar"/>
+                <include name="commons-pool-*.jar"/>
+                <include name="j8fu-*.jar"/>
+                <include name="jargo-*.jar"/>
+                <include name="jline-*.jar"/>
+                <include name="log4j-api-*.jar"/>
+                <include name="log4j-core-*.jar"/>
+                <include name="rsyntaxtextarea-*.jar"/>
+                <include name="ws-commons-util-*.jar"/>
+                <include name="xmldb*.jar"/>
+                <include name="xmlrpc-client-*.jar"/>
+                <include name="xmlrpc-common-*.jar"/>
+            </fileset>
+        </copy>
+
+        <echoxml file="exist-config.xml">
+            <exist>
+                    <version>${project.version}</version>
+            </exist>
+        </echoxml>
+    </target>
+
+
+</project>
