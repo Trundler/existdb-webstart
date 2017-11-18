@@ -29,7 +29,7 @@
 
     <target name="keygen" description="Generate (dummy) keystore file" unless="keystore.present">
         <echo message="Generating keystore file '${keystore.file}'"/>
-        <genkey alias="alias" storepass="secret" keystore="${keystore.file}" verbose="false" validity="10000">
+        <genkey alias="${keystore.alias}" storepass="${keystore.password}" keystore="${keystore.file}" verbose="false" validity="10000">
             <dname>
                 <param name="CN" value="eXist-db"/>
                 <param name="O" value="exist.org"/>
