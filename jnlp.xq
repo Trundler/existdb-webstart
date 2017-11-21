@@ -5,13 +5,17 @@ declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare option output:method "xml";
 declare option output:media-type "application/x-java-jnlp-file";
 
-let $url := request:get-url()
+(: Get external URL, fix for strange response of Tomcat :)
+let $url := replace(request:get-url(), "/rest/db/", "/")
 let $href := tokenize($url, "/")[last()]
-let $codebase := substring-before($url, $href)
-let $collection := '/db'||request:get-attribute("prefix")||request:get-attribute("controller")||"/jars"
-return
 
-    <jnlp spec="7.0" codebase="{ $codebase }" href="{$href}" version="3.6.0-SNAPSHOT">
+(: Codebase is the base URL to be able to download all other resources :)
+let $codebase := substring-before($url, $href)
+
+(: Calculate the location of the jar files :)
+let $collection := '/db' || request:get-attribute("prefix") || request:get-attribute("controller") || "/jars"
+return
+    <jnlp spec="7.0" codebase="{ $codebase }" href="{ $href }" version="3.6.0-SNAPSHOT">
     <information>
         <title>eXist XML-DB client</title>
         <vendor>exist-db.org</vendor>
@@ -33,11 +37,12 @@ return
         <property name="jnlp.packEnabled" value="true"/>
         <property name="java.util.logging.manager" value="org.apache.logging.log4j.jul.LogManager"/>
         <java version="1.8+"/>
-        {
-            for $resource in sort(xmldb:get-child-resources($collection))
-            return 
-                <jar href="jars/{$resource}" size="{xmldb:size($collection, $resource)}"/>
-        }
+    {
+        for $resource in sort(xmldb:get-child-resources($collection))
+        let $stippedName := replace($resource, "jar.pack.gz", "jar")
+        return
+                <jar href="jars/{ $stippedName }" size="{ xmldb:size($collection, $resource) }"/>
+    }
     </resources>
     <application-desc main-class="org.exist.client.InteractiveClient">
         <argument>-ouri=xmldb:exist://localhost:8080/exist/xmlrpc</argument>
