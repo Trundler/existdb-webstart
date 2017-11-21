@@ -2,3 +2,4 @@ webstart.keystore
 jars
 exist-config.xml
 build
+expath-pkg.xml
