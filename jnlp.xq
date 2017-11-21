@@ -12,10 +12,17 @@ let $href := tokenize($url, "/")[last()]
 (: Codebase is the base URL to be able to download all other resources :)
 let $codebase := substring-before($url, $href)
 
-(: Calculate the location of the jar files :)
-let $collection := '/db' || request:get-attribute("prefix") || request:get-attribute("controller") || "/jars"
+(: Toplevel app Collection :)
+let $currentCollection := '/db' || request:get-attribute("prefix") || request:get-attribute("controller")
+
+(: Determine the location of the jar files :)
+let $jarsCollection := $currentCollection || "/jars"
+
+(: Get eXist-db version :)
+let $version := data(doc("exist-config.xml")//version)
+
 return
-    <jnlp spec="7.0" codebase="{ $codebase }" href="{ $href }" version="3.6.0-SNAPSHOT">
+    <jnlp spec="7.0" codebase="{ $codebase }" href="{ $href }" version="{$version}">
     <information>
         <title>eXist XML-DB client</title>
         <vendor>exist-db.org</vendor>
@@ -38,10 +45,10 @@ return
         <property name="java.util.logging.manager" value="org.apache.logging.log4j.jul.LogManager"/>
         <java version="1.8+"/>
     {
-        for $resource in sort(xmldb:get-child-resources($collection))
+        for $resource in sort(xmldb:get-child-resources($jarsCollection))
         let $stippedName := replace($resource, "jar.pack.gz", "jar")
         return
-                <jar href="jars/{ $stippedName }" size="{ xmldb:size($collection, $resource) }"/>
+                <jar href="jars/{ $stippedName }" size="{ xmldb:size($jarsCollection, $resource) }"/>
     }
     </resources>
     <application-desc main-class="org.exist.client.InteractiveClient">
