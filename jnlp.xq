@@ -32,10 +32,11 @@ return
             or querying.</description>
         <description kind="short">eXist XML-DB client</description>
         <description kind="tooltip">eXist XML-DB client</description>
-        <icon href="resources/images/jnlp_logo.jpg"/>
-        <icon href="resources/images/jnlp_icon_128x128.gif" width="128" height="128"/>
-        <icon href="resources/images/jnlp_icon_64x64.gif" width="64" height="64"/>
-        <icon href="resources/images/jnlp_icon_32x32.gif" width="32" height="32"/>
+        <icon kind="splash" href="resources/images/jnlp_splash.png"/>
+        <icon href="resources/images/jnlp_icon_64x64.png" width="64" height="64"/>
+        <icon kind="shortcut" href="resources/images/jnlp_icon_16x16.png" width="16" height="16"/>
+        <icon kind="shortcut" href="resources/images/jnlp_icon_32x32.png" width="32" height="32"/>
+        <offline-allowed/>
     </information>
     <security>
         <all-permissions/>
