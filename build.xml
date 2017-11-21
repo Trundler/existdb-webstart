@@ -56,12 +56,12 @@
             <arg value="--modification-time=latest"/>
             <arg value="--deflate-hint=true"/>
             <arg value="--segment-limit=-1"/>
-            <!--<arg value="&#45;&#45;strip-debug"/>-->
+            <!--<arg value="- -strip-debug"/>-->
             <arg value="--effort=9"/>
             <targetfile/>
             <srcfile/>
-            <fileset dir="${work.dir}" includes="**/*.jar" />
-            <mapper type="glob" from="*" to="*.pack.gz" />
+            <fileset dir="${work.dir}" includes="**/*.jar"/>
+            <mapper type="glob" from="*" to="*.pack.gz"/>
         </apply>
     </target>
 
@@ -93,6 +93,7 @@
                 <include name="jline-*.jar"/>
                 <include name="log4j-api-*.jar"/>
                 <include name="log4j-core-*.jar"/>
+                <include name="log4j-jul-*.jar"/>
                 <include name="rsyntaxtextarea-*.jar"/>
                 <include name="ws-commons-util-*.jar"/>
                 <include name="xmldb*.jar"/>
