@@ -69,6 +69,7 @@
         <delete dir="${work.dir}" failonerror="false"/>
         <delete dir="${build.dir}" failonerror="false"/>
         <delete file="${keystore.file}" failonerror="false"/>
+        <delete file="expath-pkg.xml" failonerror="false"/>
     </target>
 
 
@@ -82,9 +83,9 @@
     <target name="prepare" description="Prepare">
         <mkdir dir="${work.dir}"/>
 
-        <copy file="${exist.home}/exist.jar" tofile="${work.dir}/exist-${project.version}.jar"/>
+        <copy file="${exist.home}/exist.jar" tofile="${work.dir}/exist-${project.version}.jar" overwrite="true"/>
 
-        <copy todir="${work.dir}">
+        <copy todir="${work.dir}" overwrite="true">
             <fileset dir="${exist.home}/lib/core">
                 <include name="commons-io-*.jar"/>
                 <include name="commons-pool-*.jar"/>
@@ -101,6 +102,16 @@
                 <include name="xmlrpc-client-*.jar"/>
                 <include name="xmlrpc-common-*.jar"/>
             </fileset>
+        </copy>
+
+        <copy file="expath-pkg.xml.tmpl" tofile="expath-pkg.xml" overwrite="true">
+
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from="EXIST_VERSION" to="${project.version}"/>
+                </tokenfilter>
+            </filterchain>
+
         </copy>
 
         <echoxml file="exist-config.xml">
