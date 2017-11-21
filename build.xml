@@ -94,6 +94,7 @@
                 <include name="log4j-api-*.jar"/>
                 <include name="log4j-core-*.jar"/>
                 <include name="log4j-jul-*.jar"/>
+                <!-- log4j-slf4j-impl-2.9.0.jar -->
                 <include name="rsyntaxtextarea-*.jar"/>
                 <include name="ws-commons-util-*.jar"/>
                 <include name="xmldb*.jar"/>
