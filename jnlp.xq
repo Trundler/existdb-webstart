@@ -6,7 +6,7 @@ declare option output:method "xml";
 declare option output:media-type "application/x-java-jnlp-file";
 
 (: Get external URL, fix for strange response of Tomcat :)
-let $url := replace(request:get-url(), "/rest/db/", "/")
+let $url := replace( replace(request:get-url(), "/rest/db/", "/") , ".xq", ".jnlp")
 let $href := tokenize($url, "/")[last()]
 
 (: Codebase is the base URL to be able to download all other resources :)
