@@ -11,7 +11,7 @@
     <property file="${exist.home}/build.properties"/>
 
     <!-- derive properties from expath-pkg.xml -->
-    <xmlproperty file="expath-pkg.xml"/>
+    <xmlproperty file="expath-pkg.xml.tmpl"/>
     <property name="xar.version" value="${package(version)}"/>
     <property name="xar.app" value="${package(abbrev)}"/>
 
