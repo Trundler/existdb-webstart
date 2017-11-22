@@ -6,32 +6,35 @@ declare option output:method "xml";
 declare option output:media-type "application/x-java-jnlp-file";
 
 (: Get external URL, fix for strange response of Tomcat :)
-let $url := replace( replace(request:get-url(), "/rest/db/", "/") , ".xq", ".jnlp")
+let $url := replace(replace(request:get-url(), "/rest/db/", "/"), ".xq", ".jnlp")
 let $href := tokenize($url, "/")[last()]
 
-(: Codebase is the base URL to be able to download all other resources :)
+(: Codebase is the base URL to be able to download all other resources :) 
 let $codebase := substring-before($url, $href)
 
-(: Toplevel app Collection :)
+(: For XMLRPC we need the part after http(s):// :)
+let $xmlrpc := substring-after(substring-before($codebase, request:get-attribute("prefix") || request:get-attribute("controller")),"://")
+
+(: Toplevel app Collection :) 
 let $currentCollection := '/db' || request:get-attribute("prefix") || request:get-attribute("controller")
 
-(: Determine the location of the jar files :)
+(: Determine the location of the jar files :) 
 let $jarsCollection := $currentCollection || "/jars"
 
-(: Get eXist-db version :)
+(: Get eXist-db version :) 
 let $version := data(doc("exist-config.xml")//version)
-
 return
-    <jnlp spec="7.0" codebase="{ $codebase }" href="{ $href }" version="{$version}">
+    <jnlp spec="7.0" codebase="{ $codebase }" href="{ $href }" version="{ $version }">
     <information>
-        <title>eXist XML-DB client</title>
+        <title>eXist-db client ({$version})</title>
         <vendor>exist-db.org</vendor>
         <homepage href="http://exist-db.org"/>
-        <description>Integrated command-line and gui client, entirely based on the XML:DB API and provides commands for
-            most database related tasks, like creating and removing collections, user management, batch-loading XML data
+        <description>Integrated command-line and gui client, entirely based on the 
+            XML:DB API and provides commands for most database related tasks, 
+            like creating and removing collections, user management, batch-loading XML data
             or querying.</description>
-        <description kind="short">eXist XML-DB client</description>
-        <description kind="tooltip">eXist XML-DB client</description>
+        <description kind="short">eXist-db client</description>
+        <description kind="tooltip">eXist-db client</description>
         <icon kind="splash" href="resources/images/jnlp_splash.png"/>
         <icon href="resources/images/jnlp_icon_64x64.png" width="64" height="64"/>
         <icon kind="shortcut" href="resources/images/jnlp_icon_16x16.png" width="16" height="16"/>
@@ -43,17 +46,23 @@ return
     </security>
     <resources>
         <property name="jnlp.packEnabled" value="true"/>
-        <property name="java.util.logging.manager" value="org.apache.logging.log4j.jul.LogManager"/>
         <java version="1.8+"/>
     {
         for $resource in sort(xmldb:get-child-resources($jarsCollection))
         let $stippedName := replace($resource, "jar.pack.gz", "jar")
         return
-                <jar href="jars/{ $stippedName }" size="{ xmldb:size($jarsCollection, $resource) }"/>
+            <jar href="jars/{ $stippedName }" size="{ xmldb:size($jarsCollection, $resource) }"/>
     }
     </resources>
     <application-desc main-class="org.exist.client.InteractiveClient">
-        <argument>-ouri=xmldb:exist://localhost:8080/exist/xmlrpc</argument>
+        <argument>-ouri=xmldb:exist://{ $xmlrpc }/xmlrpc</argument>
         <argument>--no-embedded-mode</argument>
+        {
+            if(starts-with($codebase, "https:"))            
+            then
+                <argument>--use-ssl</argument>
+            else
+                ()
+        }
     </application-desc>
 </jnlp>
