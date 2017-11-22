@@ -94,7 +94,7 @@
                 <include name="jline-*.jar"/>
                 <include name="log4j-api-*.jar"/>
                 <include name="log4j-core-*.jar"/>
-                <include name="log4j-jul-*.jar"/>
+                <!--<include name="log4j-jul-*.jar"/>-->
                 <!-- log4j-slf4j-impl-2.9.0.jar -->
                 <include name="rsyntaxtextarea-*.jar"/>
                 <include name="ws-commons-util-*.jar"/>
@@ -119,6 +119,10 @@
                 <version>${project.version}</version>
             </exist>
         </echoxml>
+
+        <jar destfile="${work.dir}/log4j-configuration.jar"
+             basedir="src"
+             includes="*.xml"/>
     </target>
 
     <target name="xar" description="Build XAR file">
