@@ -128,7 +128,7 @@
     <target name="xar" description="Build XAR file">
         <echo message="Build XAR file in '${build.dir}'"/>
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${xar.app}-${xar.version}.xar" excludes="${build.dir}/*,.idea/*,${keystore.file}"/>
+        <zip basedir="." destfile="${build.dir}/${xar.app}-${xar.version}.xar" excludes="${build.dir}/*,.idea/*,${keystore.file},.exist*"/>
     </target>
 
 </project>
