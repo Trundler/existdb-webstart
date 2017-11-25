@@ -2,3 +2,6 @@ webstart.keystore
 jars
 exist-config.xml
 build
+expath-pkg.xml
+.exist_history
+.exist_query_history

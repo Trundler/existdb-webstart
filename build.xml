@@ -11,7 +11,7 @@
     <property file="${exist.home}/build.properties"/>
 
     <!-- derive properties from expath-pkg.xml -->
-    <xmlproperty file="expath-pkg.xml"/>
+    <xmlproperty file="expath-pkg.xml.tmpl"/>
     <property name="xar.version" value="${package(version)}"/>
     <property name="xar.app" value="${package(abbrev)}"/>
 
@@ -58,12 +58,12 @@
             <arg value="--modification-time=latest"/>
             <arg value="--deflate-hint=true"/>
             <arg value="--segment-limit=-1"/>
-            <!--<arg value="&#45;&#45;strip-debug"/>-->
+            <!--<arg value="- -strip-debug"/>-->
             <arg value="--effort=9"/>
             <targetfile/>
             <srcfile/>
-            <fileset dir="${work.dir}" includes="**/*.jar" />
-            <mapper type="glob" from="*" to="*.pack.gz" />
+            <fileset dir="${work.dir}" includes="**/*.jar"/>
+            <mapper type="glob" from="*" to="*.pack.gz"/>
         </apply>
     </target>
 
@@ -71,6 +71,7 @@
         <delete dir="${work.dir}" failonerror="false"/>
         <delete dir="${build.dir}" failonerror="false"/>
         <delete file="${keystore.file}" failonerror="false"/>
+        <delete file="expath-pkg.xml" failonerror="false"/>
     </target>
 
 
@@ -84,9 +85,9 @@
     <target name="prepare" description="Prepare">
         <mkdir dir="${work.dir}"/>
 
-        <copy file="${exist.home}/exist.jar" tofile="${work.dir}/exist-${project.version}.jar"/>
+        <copy file="${exist.home}/exist.jar" tofile="${work.dir}/exist-${project.version}.jar" overwrite="true"/>
 
-        <copy todir="${work.dir}">
+        <copy todir="${work.dir}" overwrite="true">
             <fileset dir="${exist.home}/lib/core">
                 <include name="commons-io-*.jar"/>
                 <include name="commons-pool-*.jar"/>
@@ -95,6 +96,8 @@
                 <include name="jline-*.jar"/>
                 <include name="log4j-api-*.jar"/>
                 <include name="log4j-core-*.jar"/>
+                <!--<include name="log4j-jul-*.jar"/>-->
+                <!-- log4j-slf4j-impl-2.9.0.jar -->
                 <include name="rsyntaxtextarea-*.jar"/>
                 <include name="ws-commons-util-*.jar"/>
                 <include name="xmldb*.jar"/>
@@ -103,17 +106,31 @@
             </fileset>
         </copy>
 
+        <copy file="expath-pkg.xml.tmpl" tofile="expath-pkg.xml" overwrite="true">
+
+            <filterchain>
+                <tokenfilter>
+                    <replacestring from="EXIST_VERSION" to="${project.version}"/>
+                </tokenfilter>
+            </filterchain>
+
+        </copy>
+
         <echoxml file="exist-config.xml">
             <exist>
                 <version>${project.version}</version>
             </exist>
         </echoxml>
+
+        <jar destfile="${work.dir}/log4j-configuration.jar"
+             basedir="src"
+             includes="*.xml"/>
     </target>
 
     <target name="xar" description="Build XAR file">
         <echo message="Build XAR file in '${build.dir}'"/>
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${xar.app}-${xar.version}.xar" excludes="${build.dir}/*,.idea/*,${keystore.file}"/>
+        <zip basedir="." destfile="${build.dir}/${xar.app}-${xar.version}.xar" excludes="${build.dir}/*,.idea/*,${keystore.file},.exist*"/>
     </target>
 
 </project>
