@@ -44,8 +44,10 @@
         <echo message="Generating keystore file '${keystore.file}'"/>
         <genkey alias="${keystore.alias}" storepass="${keystore.password}" keystore="${keystore.file}" verbose="false" validity="10000">
             <dname>
-                <param name="CN" value="eXist-db"/>
-                <param name="O" value="exist.org"/>
+                <param name="CN" value="eXist-db java client"/>
+                <param name="OU" value="eXist-db"/>
+                <param name="O"  value="eXist-db.org"/>
+                <param name="C"  value="NL"/>
             </dname>
         </genkey>
     </target>
