@@ -1,18 +1,19 @@
 # existdb-webstart
+
 eXist-db java client bundled in a XAR file
 
 ## Introduction
 
 The goal of this project is to make the build of eXist-db simpler and more 
-robust by taking out the JAR signing step from the build scripts. The jar
-files are solely used by the eXist-db webstart-download feature, this feature which allows to run the
+robust by taking out the "JAR signing step" from the build scripts. These signed JAR
+files are solely used by the eXist-db webstart-download feature, which allows users to run the
 eXist-db Java client via Java Webstart. Webstart requires JAR files to
 be electronically signed.
 
-At this moment the JAR files are checked-in into the GIT repostory. When JAR files
-get signed this means that the files are actually modified. As a result GIT will indicate
-changed files and the developer needs to be very careful  not commiting the updated
-files. In addition: signing JAR files costs quite some time.
+At this moment the JAR files are checked-in into the git repostory. When JAR files
+get signed this means that the files are actually modified. As a result git will indicate
+changed files and the developer needs to be very careful not to commit the updated
+files. In addition, signing JAR files costs quite some time.
 
 ## Solution
 
@@ -23,6 +24,7 @@ functionality. The main improvements:
 - The JAR files are compressed with PACK200 technology and GZIP, making the download almost 75% smaller.
 
 The webstart execution process works as follows:
+
 - User clicks on java webstart (aka JNLP) link in browser
 - Browser downloads the JNLP (XML) file.
 - User clicks on JNLP file, the javaws(.exe) application is started
@@ -30,7 +32,6 @@ The webstart execution process works as follows:
 - javaws loads the JNLP file from the previous location (yes!)
 - javaws steps: download JAR files, decompress JAR files, verify signature of JAR files
 - javaws starts application
-
 
 ## Prerequisites
 
@@ -48,8 +49,8 @@ The webstart execution process works as follows:
     - or use `$EXIST_HOME/build.sh`
 - The XAR file is generated in the `build` directory
 
-
 Ant actions:
+
 - generate `webstart.keystore` when not existemt
 - copy JAR files from `$EXIST_HOME`
 - processes JAR files (repack)
@@ -72,4 +73,5 @@ In the past Java Applets and Java Webstart applications have been used to exploi
 security, Sun Microsystems (Oracle) have implemented several protection steps. Unfortunately these steps
 reduced the usability a bit.
 
-Todo: add Wiki examples and FAQs
+Todo: 
+- [ ] add Wiki examples and FAQs
