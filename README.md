@@ -43,6 +43,7 @@ The webstart execution process works as follows:
 
 ## Build
 
+- Edit `build.properties`, configure `exist.home`
 - Run `ant` in the toplevel directory 
     - or use `$EXIST_HOME/build.sh`
 - The XAR file is generated in the `build` directory
