@@ -62,10 +62,9 @@ Ant actions:
 
 ## Run
 
-- Open the eXist-db dashboard in a webbrowser and click the Java logo.
+- Open the eXist-db dashboard in a web browser and select the "eXist-db Java Client" application (note that this is a different name than the Dashboard plugin included in eXist, "Java Admin Client"; both this app and that plugin have the same Java logo). Direct link (assuming a default installation; you may need to update the hostname and port number): <http://localhost:8080/exist/apps/webstart/exist.jnlp>.
 or
-- start `javaws http://localhost:8080/exist/apps/webstart/exist.jnlp` (use correct hostname and portnumber)
-    
+- Paste the following command into your terminal (assuming a default installation; you may need to update the hostname and port number): `javaws http://localhost:8080/exist/apps/webstart/exist.jnlp`
 
 ## Notes
 
