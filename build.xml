@@ -20,7 +20,7 @@
     <!-- flag to prevent regeneration of keystore -->
     <available file="${keystore.file}" property="keystore.present"/>
 
-    <target name="all" depends="keygen,prepare,repack,sign,pack,clean-up,xar" description="Generate signed JAR files"/>
+    <target name="all" depends="keygen,prepare,repack,sign,pack,clean,xar" description="Generate signed JAR files"/>
 
     <target name="sign" description="Sign JAR files">
         <echo message="Signing libs in '${work.dir}'"/>
@@ -75,7 +75,7 @@
     </target>
 
 
-    <target name="clean-up" description="Cleanup tmp jar files">
+    <target name="clean" description="Cleanup jar and xar files">
         <delete failonerror="false">
             <fileset dir="${work.dir}" includes="*.jar"/>
             <fileset dir="${build.dir}" includes="*.xar"/>
@@ -130,7 +130,7 @@
     <target name="xar" description="Build XAR file">
         <echo message="Build XAR file in '${build.dir}'"/>
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${xar.app}-${xar.version}.xar" excludes="${build.dir}/*,.idea/*,${keystore.file},.exist*"/>
+        <zip basedir="." destfile="${build.dir}/${xar.app}-${project.version}.xar" excludes="${build.dir}/*,.idea/*,${keystore.file},.exist*"/>
     </target>
 
 </project>
