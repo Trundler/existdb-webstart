@@ -8,7 +8,7 @@ declare variable $exist:root external;
 
 if ( $exist:path eq "/") then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <redirect url="index.jnlp"/>
+        <redirect url="exist.jnlp"/>
     </dispatch>
     
 else if( ends-with($exist:resource , ".jnlp")) then
