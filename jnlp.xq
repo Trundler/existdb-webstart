@@ -15,30 +15,29 @@ let $codebase := substring-before($url, $href)
 (: For XMLRPC we need the part after http(s):// :)
 let $xmlrpc := substring-after(substring-before($codebase, request:get-attribute("prefix") || request:get-attribute("controller")),"://")
 
-(: Toplevel app Collection :) 
-let $currentCollection := '/db' || request:get-attribute("prefix") || request:get-attribute("controller")
+(: Get eXist-db version :) 
+let $versionDoc := doc("exist-config.xml")
+let $version := data(doc("exist-config.xml")//version)
 
 (: Determine the location of the jar files :) 
-let $jarsCollection := $currentCollection || "/jars"
+let $jarsCollection := util:collection-name($versionDoc) || "/jars"
 
-(: Get eXist-db version :) 
-let $version := data(doc("exist-config.xml")//version)
 return
     <jnlp spec="7.0" codebase="{ $codebase }" href="{ $href }" version="{ $version }">
     <information>
         <title>eXist-db client ({$version})</title>
-        <vendor>exist-db.org</vendor>
+        <vendor>eXist Native XML Database</vendor>
         <homepage href="http://exist-db.org"/>
         <description>Integrated command-line and gui client, entirely based on the 
             XML:DB API and provides commands for most database related tasks, 
             like creating and removing collections, user management, batch-loading XML data
             or querying.</description>
-        <description kind="short">eXist-db client</description>
+        <description kind="short">Java client for the eXist Native XML Database.</description>
         <description kind="tooltip">eXist-db client</description>
         <icon kind="splash" href="resources/images/jnlp_splash.png"/>
         <icon href="resources/images/jnlp_icon_64x64.png" width="64" height="64"/>
-        <icon kind="shortcut" href="resources/images/jnlp_icon_16x16.png" width="16" height="16"/>
-        <icon kind="shortcut" href="resources/images/jnlp_icon_32x32.png" width="32" height="32"/>
+        <icon href="resources/images/jnlp_icon_16x16.png" width="16" height="16"/>
+        <icon href="resources/images/jnlp_icon_32x32.png" width="32" height="32"/>
         <offline-allowed/>
     </information>
     <security>
@@ -49,9 +48,12 @@ return
         <java version="1.8+"/>
     {
         for $resource in sort(xmldb:get-child-resources($jarsCollection))
-        let $stippedName := replace($resource, "jar.pack.gz", "jar")
+        let $strippedName := replace($resource, "jar.pack.gz", "jar")
         return
-            <jar href="jars/{ $stippedName }" size="{ xmldb:size($jarsCollection, $resource) }"/>
+            <jar href="jars/{ $strippedName }" size="{ xmldb:size($jarsCollection, $resource) }">
+            { if(starts-with($strippedName, 'exist-')) then attribute main {"true"} else () }
+            </jar>
+
     }
     </resources>
     <application-desc main-class="org.exist.client.InteractiveClient">
