@@ -59,7 +59,7 @@ Ant actions:
 
 ## Install
 
-- Use the exist-db package manager to install the XAR file (see ...)
+- Use the exist-db package manager to install the XAR file (see [documentation](http://exist-db.org/exist/apps/doc/dashboard.xml?q=package&field=all&id=D2.4.8#D2.4.8) )
 
 ## Run
 
