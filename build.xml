@@ -44,6 +44,8 @@
         <apply executable="pack200" parallel="false">
             <arg value="--repack"/>
             <arg value="--segment-limit=-1"/>
+            <arg value="--no-keep-file-order"/>
+            <arg value="--strip-debug"/>
             <fileset dir="${work.dir}" includes="*.jar"/>
         </apply>
     </target>
@@ -66,8 +68,7 @@
         <apply executable="pack200" parallel="false" dest="${work.dir}">
             <arg value="--modification-time=latest"/>
             <arg value="--deflate-hint=true"/>
-            <arg value="--segment-limit=-1"/>
-            <!--<arg value="- -strip-debug"/>-->
+            <arg value="--segment-limit=-1"/>          
             <arg value="--effort=9"/>
             <targetfile/>
             <srcfile/>
