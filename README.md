@@ -49,5 +49,4 @@ In the past Java Applets and Java Webstart applications have been used to exploi
 security, Sun Microsystems (Oracle) have implemented several protection steps. Unfortunately these steps
 reduced the usability a bit.
 
-Todo: 
-- [ ] add Wiki examples and FAQs
+Please consult the [Wiki](wiki) for more details 
