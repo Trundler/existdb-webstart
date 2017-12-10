@@ -10,6 +10,13 @@
     <!-- import properties from eXist-db -->
     <property file="${exist.home}/build.properties"/>
 
+    <!-- Load ant contrib from exist-home -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${exist.home}/tools/ant/lib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
     <!-- derive properties from expath-pkg.xml -->
     <xmlproperty file="expath-pkg.xml.tmpl"/>
     <property name="xar.version" value="${package(version)}"/>
@@ -24,7 +31,8 @@
 
     <target name="sign" description="Sign JAR files">
         <echo message="Signing libs in '${work.dir}'"/>
-        <signjar alias="${keystore.alias}" keystore="${keystore.file}" storepass="${keystore.password}" lazy="true">
+        <signjar tsaurl="${tsa.url}" alias="${keystore.alias}" keystore="${keystore.file}"
+            storepass="${keystore.password}" lazy="true" storetype="${keystore.type}">
             <path>
                 <fileset dir="${work.dir}" includes="*.jar"/>
             </path>
@@ -42,12 +50,13 @@
 
     <target name="keygen" description="Generate (dummy) keystore file" unless="keystore.present">
         <echo message="Generating keystore file '${keystore.file}'"/>
-        <genkey alias="${keystore.alias}" storepass="${keystore.password}" keystore="${keystore.file}" verbose="false" validity="10000">
+        <genkey alias="${keystore.alias}" storepass="${keystore.password}" keystore="${keystore.file}" verbose="false"
+            storetype="${keystore.type}" validity="10000">
             <dname>
                 <param name="CN" value="eXist-db java client"/>
                 <param name="OU" value="eXist-db"/>
-                <param name="O"  value="eXist-db.org"/>
-                <param name="C"  value="NL"/>
+                <param name="O" value="eXist-db.org"/>
+                <param name="C" value="NL"/>
             </dname>
         </genkey>
     </target>
@@ -70,10 +79,9 @@
     <target name="clean-all" description="Cleanup all files">
         <delete dir="${work.dir}" failonerror="false"/>
         <delete dir="${build.dir}" failonerror="false"/>
-        <delete file="${keystore.file}" failonerror="false"/>
+        <!--<delete file="${keystore.file}" failonerror="false"/>-->
         <delete file="expath-pkg.xml" failonerror="false"/>
     </target>
-
 
     <target name="clean" description="Cleanup jar and xar files">
         <delete failonerror="false">
@@ -85,8 +93,10 @@
     <target name="prepare" description="Prepare">
         <mkdir dir="${work.dir}"/>
 
+        <!-- copy and rename exist.jar to include version number -->
         <copy file="${exist.home}/exist.jar" tofile="${work.dir}/exist-${project.version}.jar" overwrite="true"/>
 
+        <!-- copy all required JAR files from exist, note that only a subset of JAR files is required -->
         <copy todir="${work.dir}" overwrite="true">
             <fileset dir="${exist.home}/lib/core">
                 <include name="commons-io-*.jar"/>
@@ -106,31 +116,56 @@
             </fileset>
         </copy>
 
+        <!-- parse expath-pkg.xml template to include exist-db version -->
         <copy file="expath-pkg.xml.tmpl" tofile="expath-pkg.xml" overwrite="true">
-
             <filterchain>
                 <tokenfilter>
                     <replacestring from="EXIST_VERSION" to="${project.version}"/>
                 </tokenfilter>
             </filterchain>
-
         </copy>
 
+        <!-- store existdb version inside XAR file -->
         <echoxml file="exist-config.xml">
             <exist>
                 <version>${project.version}</version>
             </exist>
         </echoxml>
 
-        <jar destfile="${work.dir}/log4j-configuration.jar"
-             basedir="src"
-             includes="*.xml"/>
+        <!-- create jar file that includes log4j2 configuration -->
+        <jar destfile="${work.dir}/log4j-configuration.jar" basedir="src" includes="*.xml"/>
+
+        <!-- iterate over all jar files and add attirbutes to manifest file -->
+        <!-- https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/manifest.html  -->
+        <for param="jarFile">
+            <path>
+                <fileset dir="${work.dir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </path>
+            <sequential>
+                <jar update="true" file="@{jarFile}">
+                    <manifest>
+                        <!-- allow the application to run anywhere 
+                             https://docs.oracle.com/javase/tutorial/deployment/deploymentInDepth/deployingWithoutCodebase.html -->
+                        <attribute name="Codebase" value="*"/>
+
+                        <!-- the appliction needs to be able to access localfiles, so 'sandbox' is not sufficient -->
+                        <attribute name="Permissions" value="all-permissions"/>
+
+                        <!-- this name is visible in the security window -->
+                        <attribute name="Application-Name" value="eXist Native XML Database Client"/>
+                    </manifest>
+                </jar>
+            </sequential>
+        </for>
     </target>
 
     <target name="xar" description="Build XAR file">
         <echo message="Build XAR file in '${build.dir}'"/>
         <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${xar.app}-${project.version}.xar" excludes="${build.dir}/*,.idea/*,${keystore.file},.exist*"/>
+        <zip basedir="." destfile="${build.dir}/${xar.app}-${project.version}.xar"
+            excludes="${build.dir}/*,.idea/*,${keystore.file},.exist*"/>
     </target>
 
 </project>

@@ -16,6 +16,9 @@ else if( ends-with($exist:resource , ".jnlp")) then
             <forward url="{$exist:controller}/jnlp.xq">
                     <set-attribute name="controller" value="{$exist:controller}"/>
                     <set-attribute name="prefix" value="{$exist:prefix}"/>
+                    <set-attribute name="resource" value="{$exist:resource}"/>
+                    <set-attribute name="path" value="{$exist:path}"/>
+                    <set-attribute name="root" value="{$exist:root}"/>
             </forward>
     </dispatch>
     
@@ -35,6 +38,8 @@ else if (ends-with($exist:resource, ".pack.gz")) then
                     <set-attribute name="controller" value="{$exist:controller}"/>
                     <set-attribute name="prefix" value="{$exist:prefix}"/>
                     <set-attribute name="resource" value="{$exist:resource}"/>
+                    <set-attribute name="path" value="{$exist:path}"/>
+                    <set-attribute name="root" value="{$exist:root}"/>
             </forward>
     </dispatch>
     
