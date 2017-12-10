@@ -49,4 +49,4 @@ In the past Java Applets and Java Webstart applications have been used to exploi
 security, Sun Microsystems (Oracle) have implemented several protection steps. Unfortunately these steps
 reduced the usability a bit.
 
-Please consult the [Wiki](wiki) for more details 
+Please consult the [Wiki](https://github.com/Trundler/existdb-webstart/wiki) for more details 
